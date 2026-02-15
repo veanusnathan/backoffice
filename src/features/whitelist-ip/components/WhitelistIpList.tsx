@@ -1,0 +1,146 @@
+import { useState } from 'react';
+import {
+  Alert,
+  Button,
+  Paper,
+  Table,
+  Loader,
+  TextInput,
+  Group,
+  ActionIcon,
+  Tooltip,
+  Stack,
+  Title,
+} from '@mantine/core';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { CopyButton } from '~/components/core/CopyButton';
+import { useStore } from '~/stores';
+import { isSuperuser } from '~/features/auth';
+import { useWhitelistedIpsQuery } from '../api/useWhitelistedIpsQuery';
+import {
+  useCreateWhitelistedIpMutation,
+  useDeleteWhitelistedIpMutation,
+} from '../api/useWhitelistedIpsMutations';
+import type { WhitelistedIp } from '../types';
+
+export function WhitelistIpList() {
+  const user = useStore((s) => s.user);
+  const superuser = isSuperuser(user);
+
+  const { data: items = [], isLoading } = useWhitelistedIpsQuery();
+  const createMutation = useCreateWhitelistedIpMutation();
+  const deleteMutation = useDeleteWhitelistedIpMutation();
+
+  const [ip, setIp] = useState('');
+  const [description, setDescription] = useState('');
+
+  const handleAdd = () => {
+    const trimmedIp = ip.trim();
+    if (!trimmedIp) return;
+    createMutation.mutate(
+      { ip: trimmedIp, description: description.trim() || undefined },
+      {
+        onSuccess: () => {
+          setIp('');
+          setDescription('');
+        },
+      },
+    );
+  };
+
+  if (!superuser && !import.meta.env.DEV) {
+    return (
+      <Paper p="lg">
+        <Alert color="red" title="Access denied">
+          Only superusers can manage whitelisted IPs.
+        </Alert>
+      </Paper>
+    );
+  }
+
+  return (
+    <Stack spacing="lg">
+      <Paper p="lg">
+        <Title order={5} mb="md">
+          Add IP to whitelist
+        </Title>
+        <Group align="flex-end">
+          <TextInput
+            label="IP address"
+            placeholder="192.168.1.1"
+            value={ip}
+            onChange={(e) => setIp(e.currentTarget.value)}
+            style={{ minWidth: 180 }}
+          />
+          <TextInput
+            label="Description (optional)"
+            placeholder="e.g. Office network"
+            value={description}
+            onChange={(e) => setDescription(e.currentTarget.value)}
+            style={{ minWidth: 200 }}
+          />
+          <Button
+            leftIcon={<IconPlus size={16} />}
+            onClick={handleAdd}
+            loading={createMutation.isPending}
+            disabled={!ip.trim()}
+          >
+            Add
+          </Button>
+        </Group>
+      </Paper>
+
+      <Paper p="lg">
+        <Title order={5} mb="md">
+          Whitelisted IPs
+        </Title>
+        <Table highlightOnHover>
+          <thead>
+            <tr>
+              <th>IP</th>
+              <th>Description</th>
+              <th style={{ width: 1 }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan={3}>
+                  <Loader size="sm" />
+                </td>
+              </tr>
+            ) : items.length === 0 ? (
+              <tr>
+                <td colSpan={3}>No whitelisted IPs yet.</td>
+              </tr>
+            ) : (
+              items.map((item: WhitelistedIp) => (
+                <tr key={item.id}>
+                  <td>
+                    <Group spacing="xs" noWrap>
+                      {item.ip}
+                      <CopyButton value={item.ip} size={14} />
+                    </Group>
+                  </td>
+                  <td>{item.description ?? '–'}</td>
+                  <td>
+                    <Tooltip label="Remove from whitelist">
+                      <ActionIcon
+                        color="red"
+                        variant="light"
+                        onClick={() => deleteMutation.mutate(item.id)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <IconTrash size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </Table>
+      </Paper>
+    </Stack>
+  );
+}
