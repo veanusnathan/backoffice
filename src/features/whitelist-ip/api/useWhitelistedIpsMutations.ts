@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 import type { WhitelistedIp } from '../types';
 
@@ -21,10 +22,10 @@ export function useCreateWhitelistedIpMutation() {
       queryClient.invalidateQueries({ queryKey: ['whitelisted-ips'] });
       notifications.show({ message: 'IP whitelisted', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Add failed',
-        message: err?.message ?? 'Could not add IP',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -43,10 +44,10 @@ export function useDeleteWhitelistedIpMutation() {
       queryClient.invalidateQueries({ queryKey: ['whitelisted-ips'] });
       notifications.show({ message: 'IP removed from whitelist', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Delete failed',
-        message: err?.message ?? 'Could not remove IP',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

@@ -2,27 +2,32 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
-import type { Domain } from '../types';
 
-export function useReactivateDomainMutation() {
+export interface CreateGroupPayload {
+  name: string;
+  description?: string;
+}
+
+export function useCreateGroupMutation() {
   const { axiosWithToken } = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (domainId: string): Promise<Domain> => {
-      const res = await axiosWithToken.post<Domain>(`domains/${domainId}/reactivate`);
-      return res.data;
+    mutationFn: async (payload: CreateGroupPayload) => {
+      const { data } = await axiosWithToken.post<{ id: number; name: string; description: string | null }>(
+        'domains/groups',
+        payload,
+      );
+      return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['domain-groups'] });
       queryClient.invalidateQueries({ queryKey: ['domains'] });
-      notifications.show({
-        message: 'Domain reactivation requested successfully',
-        color: 'green',
-      });
+      notifications.show({ message: 'Group created', color: 'green' });
     },
     onError: (err) => {
       notifications.show({
-        title: 'Reactivate failed',
+        title: 'Create failed',
         message: getDisplayErrorMessage(err),
         color: 'red',
       });

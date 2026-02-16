@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 
 interface RefreshNawalaResult {
@@ -25,7 +26,7 @@ export function useRefreshNawalaMutation() {
       });
     },
     onError: (err: { message?: string; response?: { data?: { errors?: string[] } } }) => {
-      const msg = err?.response?.data?.errors?.[0] ?? err?.message ?? 'Could not refresh nawala status';
+      const msg = getDisplayErrorMessage(err);
       notifications.show({
         title: 'Nawala check failed',
         message: msg,

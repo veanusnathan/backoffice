@@ -1,7 +1,10 @@
 import Axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { env } from '~/config';
-// import { navigate } from 'gatsby';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useStore } from '~/stores';
+
+/** Axios error with a user-facing message attached (for UI). Raw response is unchanged for Network tab. */
+export type AxiosErrorWithDisplay = AxiosError<{ errors?: string[] }> & { displayMessage?: string };
 
 export class AxiosManager {
   public readonly axios: AxiosInstance;
@@ -75,11 +78,13 @@ export class AxiosManager {
     ) {
       useStore.setState({ accessToken: null, refreshToken: null, user: null });
     }
+    (error as AxiosErrorWithDisplay).displayMessage = getDisplayErrorMessage(error);
     return Promise.reject(error);
   }
 
   private async unauthenticatedRejectResponseInterceptor(error: AxiosError<{ errors: string[] }>) {
     const originalRequest = error.config;
+    (error as AxiosErrorWithDisplay).displayMessage = getDisplayErrorMessage(error);
     if (!originalRequest) {
       return Promise.reject(error);
     }
@@ -101,6 +106,7 @@ export class AxiosManager {
 
   private async rejectResponseInterceptor(error: AxiosError<{ errors?: string[] }>) {
     const originalRequest = error.config;
+    (error as AxiosErrorWithDisplay).displayMessage = getDisplayErrorMessage(error);
     if (!originalRequest) {
       return Promise.reject(error);
     }

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 
 interface BulkMarkUsedResult {
@@ -28,7 +29,7 @@ export function useBulkMarkUsedMutation() {
       });
     },
     onError: (err: { message?: string; response?: { data?: { errors?: string[] } } }) => {
-      const msg = err?.response?.data?.errors?.[0] ?? err?.message ?? 'Could not process file';
+      const msg = getDisplayErrorMessage(err);
       notifications.show({
         title: 'Bulk mark used failed',
         message: msg,

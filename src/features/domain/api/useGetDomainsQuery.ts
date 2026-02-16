@@ -18,6 +18,10 @@ export interface GetDomainsParams {
   page?: number;
   limit?: 10 | 50 | 100;
   unlinkedOnly?: boolean;
+  isDefense?: boolean;
+  isLinkAlt?: boolean;
+  groupId?: number;
+  ungroupedOnly?: boolean;
 }
 
 function buildQueryString(params: GetDomainsParams): string {
@@ -31,6 +35,10 @@ function buildQueryString(params: GetDomainsParams): string {
   if (params.page != null && params.page >= 1) searchParams.set('page', String(params.page));
   if (params.limit != null) searchParams.set('limit', String(params.limit));
   if (params.unlinkedOnly) searchParams.set('unlinkedOnly', 'true');
+  if (params.isDefense === true) searchParams.set('isDefense', 'true');
+  if (params.isLinkAlt === true) searchParams.set('isLinkAlt', 'true');
+  if (params.groupId != null) searchParams.set('groupId', String(params.groupId));
+  if (params.ungroupedOnly === true) searchParams.set('ungroupedOnly', 'true');
   const qs = searchParams.toString();
   return qs ? `?${qs}` : '';
 }

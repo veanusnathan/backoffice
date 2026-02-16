@@ -26,9 +26,12 @@ export const MainShell: React.FC<PropsWithChildren & MainShellProps> = ({
         <Navbar width={{ base: 300 }} p="xs" zIndex={1}>
           <Navbar.Section grow>
             <Stack spacing={1}>
-              {location?.pathname !== '/' && (
-                <SidebarLink label={homeRoutes.title} to={homeRoutes.path} icon={homeRoutes.icon} />
-              )}
+              <SidebarLink
+                label={homeRoutes.title}
+                to={homeRoutes.path}
+                icon={homeRoutes.icon}
+                active={location?.pathname === '/'}
+              />
               {sidebarMenus}
             </Stack>
           </Navbar.Section>

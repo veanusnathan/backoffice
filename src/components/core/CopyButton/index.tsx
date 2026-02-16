@@ -25,7 +25,11 @@ export function CopyButton({ value, size = 16 }: CopyButtonProps) {
   };
 
   return (
-    <Tooltip label={copied ? 'Copied!' : 'Copy to clipboard'}>
+    <Tooltip
+      label={copied ? 'Copied!' : 'Copy to clipboard'}
+      position="top"
+      withinPortal
+    >
       <ActionIcon
         variant="subtle"
         color={copied ? 'green' : 'gray'}

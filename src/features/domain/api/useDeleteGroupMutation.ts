@@ -2,27 +2,23 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
-import type { Domain } from '../types';
 
-export function useReactivateDomainMutation() {
+export function useDeleteGroupMutation() {
   const { axiosWithToken } = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (domainId: string): Promise<Domain> => {
-      const res = await axiosWithToken.post<Domain>(`domains/${domainId}/reactivate`);
-      return res.data;
+    mutationFn: async (id: number) => {
+      await axiosWithToken.delete(`domains/groups/${id}`);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['domain-groups'] });
       queryClient.invalidateQueries({ queryKey: ['domains'] });
-      notifications.show({
-        message: 'Domain reactivation requested successfully',
-        color: 'green',
-      });
+      notifications.show({ message: 'Group deleted', color: 'green' });
     },
     onError: (err) => {
       notifications.show({
-        title: 'Reactivate failed',
+        title: 'Delete failed',
         message: getDisplayErrorMessage(err),
         color: 'red',
       });

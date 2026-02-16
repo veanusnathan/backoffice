@@ -1,8 +1,9 @@
 import { ThemeIcon } from '@mantine/core';
-import { IconShieldCheck, IconServer, IconWorld } from '@tabler/icons-react';
+import { IconShieldCheck, IconServer, IconUsers, IconWorld } from '@tabler/icons-react';
 import { MainRoute } from './types';
 import { DomainListPage } from '~/pages/domain';
 import { DomainDetailPage } from '~/pages/domain/[id]';
+import { DomainGroupListPage } from '~/pages/domain/group';
 import { CpanelPage } from '~/pages/cpanel';
 import { CpanelDetailPage } from '~/pages/cpanel/[id]';
 import { WordPressPage } from '~/pages/wordpress';
@@ -29,6 +30,19 @@ export const domainRoutes: MainRoute = {
       icon: (
         <ThemeIcon variant="light">
           <IconWorld />
+        </ThemeIcon>
+      ),
+    },
+    {
+      component: <DomainGroupListPage />,
+      path: 'group',
+      index: false,
+      key: 'DOMAIN_GROUP',
+      title: 'Group',
+      isSidebarMenu: true,
+      icon: (
+        <ThemeIcon variant="light">
+          <IconUsers />
         </ThemeIcon>
       ),
     },

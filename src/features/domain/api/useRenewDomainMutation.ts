@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 import type { Domain } from '../types';
 
@@ -27,10 +28,10 @@ export function useRenewDomainMutation() {
         color: 'green',
       });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Renew failed',
-        message: err?.message ?? 'Could not renew domain',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

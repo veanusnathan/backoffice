@@ -2,6 +2,7 @@ import { notifications } from '@mantine/notifications';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { AuthResponse } from '../types';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useStore } from '~/stores';
 import { useApiClient } from '~/providers/ApiClientProvider';
 import type { LoginFormValues } from '../forms/login-schema';
@@ -56,10 +57,9 @@ export function useLoginMutation(options?: UseMutationOptions<void, Error, Login
     {
       ...options,
       onError: (error: AxiosError<{ errors?: string[] }>, variables, context) => {
-        const errors = error.response?.data?.errors;
         notifications.show({
           title: 'Login failed',
-          message: errors?.length ? errors[0] : error.message || 'Invalid username or password',
+          message: getDisplayErrorMessage(error),
           color: 'red',
         });
         options?.onError?.(error, variables, context);

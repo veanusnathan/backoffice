@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 
 interface SyncResult {
@@ -25,10 +26,10 @@ export function useSyncDomainsMutation() {
         color: 'green',
       });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Sync failed',
-        message: err?.message ?? 'Could not sync from Namecheap',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

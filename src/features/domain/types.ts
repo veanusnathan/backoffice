@@ -26,6 +26,16 @@ export interface Domain {
   isUsed?: boolean;
   /** Domain category: MS, WP, LP, RTP, or Other */
   category?: string | null;
+  /** Whether domain is defense */
+  isDefense?: boolean;
+  /** Whether domain is link alt */
+  isLinkAlt?: boolean;
+  /** Domain group; null if not assigned */
+  group?: {
+    id: number;
+    name: string;
+    description: string | null;
+  } | null;
   /** Linked cPanel account; null if not linked */
   cpanel?: {
     id: number;

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 import type { CpanelItem } from '../types';
 
@@ -39,10 +40,10 @@ export function useCreateCpanelMutation() {
       queryClient.invalidateQueries({ queryKey: ['cpanel'] });
       notifications.show({ message: 'CPanel data created', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Create failed',
-        message: err?.message ?? 'Could not create CPanel data',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -62,10 +63,10 @@ export function useUpdateCpanelMutation() {
       queryClient.invalidateQueries({ queryKey: ['cpanel'] });
       notifications.show({ message: 'CPanel data updated', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Update failed',
-        message: err?.message ?? 'Could not update CPanel data',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -84,10 +85,10 @@ export function useDeleteCpanelMutation() {
       queryClient.invalidateQueries({ queryKey: ['cpanel'] });
       notifications.show({ message: 'CPanel data deleted', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Delete failed',
-        message: err?.message ?? 'Could not delete CPanel data',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

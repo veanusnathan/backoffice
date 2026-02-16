@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 
 interface CreatePayload {
@@ -27,11 +28,10 @@ export function useCreateRoleMutation() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       notifications.show({ message: 'Role created', color: 'green' });
     },
-    onError: (err: { response?: { data?: { errors?: string[] } } }) => {
-      const errors = err?.response?.data?.errors ?? [];
+    onError: (err) => {
       notifications.show({
         title: 'Create failed',
-        message: errors.length ? errors.join(', ') : 'Could not create role',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -55,11 +55,10 @@ export function useUpdateRoleMutation() {
       queryClient.invalidateQueries({ queryKey: ['roles', variables.id] });
       notifications.show({ message: 'Role updated', color: 'green' });
     },
-    onError: (err: { response?: { data?: { errors?: string[] } } }) => {
-      const errors = err?.response?.data?.errors ?? [];
+    onError: (err) => {
       notifications.show({
         title: 'Update failed',
-        message: errors.length ? errors.join(', ') : 'Could not update role',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -78,11 +77,10 @@ export function useDeleteRoleMutation() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       notifications.show({ message: 'Role deleted', color: 'green' });
     },
-    onError: (err: { response?: { data?: { errors?: string[] } } }) => {
-      const errors = err?.response?.data?.errors ?? [];
+    onError: (err) => {
       notifications.show({
         title: 'Delete failed',
-        message: errors.length ? errors.join(', ') : 'Could not delete role',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

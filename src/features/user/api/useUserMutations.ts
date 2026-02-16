@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 import type { UserItem } from '../types';
 
@@ -31,11 +32,10 @@ export function useCreateUserMutation() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       notifications.show({ message: 'User created', color: 'green' });
     },
-    onError: (err: { response?: { data?: { errors?: string[] } } }) => {
-      const errors = err?.response?.data?.errors ?? [];
+    onError: (err) => {
       notifications.show({
         title: 'Create failed',
-        message: errors.length ? errors.join(', ') : 'Could not create user',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -56,11 +56,10 @@ export function useUpdateUserMutation() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       notifications.show({ message: 'User updated', color: 'green' });
     },
-    onError: (err: { response?: { data?: { errors?: string[] } } }) => {
-      const errors = err?.response?.data?.errors ?? [];
+    onError: (err) => {
       notifications.show({
         title: 'Update failed',
-        message: errors.length ? errors.join(', ') : 'Could not update user',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -79,11 +78,10 @@ export function useDeleteUserMutation() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       notifications.show({ message: 'User deleted', color: 'green' });
     },
-    onError: (err: { response?: { data?: { errors?: string[] } } }) => {
-      const errors = err?.response?.data?.errors ?? [];
+    onError: (err) => {
       notifications.show({
         title: 'Delete failed',
-        message: errors.length ? errors.join(', ') : 'Could not delete user',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

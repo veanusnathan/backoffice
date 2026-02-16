@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 
 export interface UpdateDomainDescriptionPayload {
@@ -25,10 +26,10 @@ export function useUpdateDomainDescriptionMutation() {
         color: 'green',
       });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Update failed',
-        message: err?.message ?? 'Could not update description',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

@@ -20,6 +20,7 @@ import { zodResolver } from '@mantine/form';
 import { openConfirmModal } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { IconEdit, IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useStore } from '~/stores';
 import { isSuperuser } from '~/features/auth';
 import { useUsersQuery } from '../api/useUsersQuery';
@@ -154,7 +155,7 @@ export function UserList() {
     return (
       <Paper p="lg">
         <Alert color="red" title="Failed to load users">
-          {(error as { message?: string })?.message ?? 'Could not fetch user list from backend.'}
+          {getDisplayErrorMessage(error)}
         </Alert>
         <Button mt="md" variant="light" onClick={() => refetch()}>
           Retry

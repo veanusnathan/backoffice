@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 import type { WordPressItem } from '../types';
 
@@ -29,10 +30,10 @@ export function useCreateWordPressMutation() {
       queryClient.invalidateQueries({ queryKey: ['wordpress'] });
       notifications.show({ message: 'WordPress data created', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Create failed',
-        message: err?.message ?? 'Could not create WordPress data',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -52,10 +53,10 @@ export function useUpdateWordPressMutation() {
       queryClient.invalidateQueries({ queryKey: ['wordpress'] });
       notifications.show({ message: 'WordPress data updated', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Update failed',
-        message: err?.message ?? 'Could not update WordPress data',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
@@ -74,10 +75,10 @@ export function useDeleteWordPressMutation() {
       queryClient.invalidateQueries({ queryKey: ['wordpress'] });
       notifications.show({ message: 'WordPress data deleted', color: 'green' });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Delete failed',
-        message: err?.message ?? 'Could not delete WordPress data',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },

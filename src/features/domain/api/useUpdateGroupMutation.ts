@@ -3,31 +3,34 @@ import { notifications } from '@mantine/notifications';
 import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 
-interface RefreshNsResult {
-  updated: number;
+export interface UpdateGroupPayload {
+  id: number;
+  name?: string;
+  description?: string;
 }
 
-export function useRefreshNameServersMutation() {
+export function useUpdateGroupMutation() {
   const { axiosWithToken } = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (): Promise<RefreshNsResult> => {
-      const res = await axiosWithToken.post<RefreshNsResult>('domains/refresh-ns');
-      return res.data;
+    mutationFn: async (payload: UpdateGroupPayload) => {
+      const { id, ...body } = payload;
+      const { data } = await axiosWithToken.patch<{ id: number; name: string; description: string | null }>(
+        `domains/groups/${id}`,
+        body,
+      );
+      return data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['domain-groups'] });
       queryClient.invalidateQueries({ queryKey: ['domains'] });
       queryClient.invalidateQueries({ queryKey: ['domain'] });
-      queryClient.invalidateQueries({ queryKey: ['domains', 'sync-metadata'] });
-      notifications.show({
-        message: `Name servers refreshed: ${data.updated} domains updated`,
-        color: 'green',
-      });
+      notifications.show({ message: 'Group updated', color: 'green' });
     },
     onError: (err) => {
       notifications.show({
-        title: 'Refresh failed',
+        title: 'Update failed',
         message: getDisplayErrorMessage(err),
         color: 'red',
       });

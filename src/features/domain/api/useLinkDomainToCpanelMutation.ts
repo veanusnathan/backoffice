@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { getDisplayErrorMessage } from '~/lib/api-error';
 import { useApiClient } from '~/providers/ApiClientProvider';
 
 interface LinkPayload {
@@ -26,10 +27,10 @@ export function useLinkDomainToCpanelMutation() {
         color: 'green',
       });
     },
-    onError: (err: { message?: string }) => {
+    onError: (err) => {
       notifications.show({
         title: 'Failed',
-        message: err?.message ?? 'Could not update domain link',
+        message: getDisplayErrorMessage(err),
         color: 'red',
       });
     },
