@@ -77,7 +77,7 @@ export function DomainDetail({ domainId }: DomainDetailProps) {
 
   const handleGroupChange = (value: string | null) => {
     const groupId = value === '' || value == null ? null : parseInt(value, 10);
-    if (isNaN(groupId)) return;
+    if (groupId != null && isNaN(groupId)) return;
     updateMutation.mutate({ domainId: domain.id, groupId });
   };
 
