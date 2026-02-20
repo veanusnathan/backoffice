@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  ActionIcon,
   Box,
   Button,
   Flex,
@@ -11,6 +12,7 @@ import {
   TextInput,
   Textarea,
   Group as MantineGroup,
+  Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconPencil, IconTrash } from '@tabler/icons-react';
@@ -59,8 +61,9 @@ export function GroupList() {
 
   const handleSaveEdit = () => {
     if (!selected) return;
+    const desc = formDescription.trim();
     updateMutation.mutate(
-      { id: selected.id, name: formName.trim(), description: formDescription.trim() || undefined },
+      { id: selected.id, name: formName.trim(), description: desc ? desc : null },
       { onSuccess: closeEdit, onSettled: () => resetForm() },
     );
   };
@@ -109,25 +112,28 @@ export function GroupList() {
                   </Text>
                 </td>
                 <td>
-                  <MantineGroup spacing="xs">
-                    <Button
-                      size="xs"
-                      variant="subtle"
-                      leftIcon={<IconPencil size={14} />}
-                      onClick={() => handleOpenEdit(group)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="xs"
-                      variant="subtle"
-                      color="red"
-                      leftIcon={<IconTrash size={14} />}
-                      onClick={() => handleOpenDelete(group)}
-                    >
-                      Delete
-                    </Button>
-                  </MantineGroup>
+                  <Flex gap="xs" wrap="nowrap" align="center">
+                    <Tooltip label="Edit">
+                      <ActionIcon
+                        size="sm"
+                        variant="subtle"
+                        color="gray"
+                        onClick={() => handleOpenEdit(group)}
+                      >
+                        <IconPencil size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                    <Tooltip label="Delete">
+                      <ActionIcon
+                        size="sm"
+                        variant="subtle"
+                        color="red"
+                        onClick={() => handleOpenDelete(group)}
+                      >
+                        <IconTrash size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Flex>
                 </td>
               </tr>
             ))}

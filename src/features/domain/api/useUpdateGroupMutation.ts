@@ -6,7 +6,7 @@ import { useApiClient } from '~/providers/ApiClientProvider';
 export interface UpdateGroupPayload {
   id: number;
   name?: string;
-  description?: string;
+  description?: string | null;
 }
 
 export function useUpdateGroupMutation() {
