@@ -32,6 +32,36 @@ export function useCreateWhitelistedIpMutation() {
   });
 }
 
+interface UpdatePayload {
+  id: number;
+  ip?: string;
+  description?: string | null;
+}
+
+export function useUpdateWhitelistedIpMutation() {
+  const { axiosWithToken } = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: UpdatePayload): Promise<WhitelistedIp> => {
+      const { id, ...body } = payload;
+      const { data } = await axiosWithToken.patch<WhitelistedIp>(`whitelisted-ips/${id}`, body);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['whitelisted-ips'] });
+      notifications.show({ message: 'IP updated', color: 'green' });
+    },
+    onError: (err) => {
+      notifications.show({
+        title: 'Update failed',
+        message: getDisplayErrorMessage(err),
+        color: 'red',
+      });
+    },
+  });
+}
+
 export function useDeleteWhitelistedIpMutation() {
   const { axiosWithToken } = useApiClient();
   const queryClient = useQueryClient();
